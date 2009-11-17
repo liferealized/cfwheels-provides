@@ -1,13 +1,12 @@
-<cfcomponent>
+<cfcomponent output="false" mixin="controller">
 
-	<cffunction name="init">
-		<cfset this.version = "0.9.4" />
+	<cffunction name="init" access="public" output="false">
+		<cfset this.version = "1.0" />
 		<cfset application.provides = {} />
 		<cfreturn this />
 	</cffunction>
 	
-	<!--- TODO: this whole plugin needs to be fully tested --->
-	<cffunction name="provides" returntype="void">
+	<cffunction name="provides" access="public" output="false" returntype="void">
 		<cfargument name="formats" required="true" type="string" />
 		<cfscript>
 			
@@ -20,7 +19,7 @@
 		<cfreturn />
 	</cffunction>
 	
-	<cffunction name="onlyProvides" returntype="void">
+	<cffunction name="onlyProvides" access="public" output="false" returntype="void">
 		<cfargument name="formats" required="true" type="string" />
 		<cfargument name="action" type="string" default="#variables.params.action#" />
 		<cfscript>
@@ -32,10 +31,10 @@
 		</cfscript>
 	</cffunction>
 	
-	<cffunction name="display">
+	<cffunction name="display" access="public" output="false">
 		<cfargument name="object" required="true" type="any" />
-		<cfargument name="controller" type="string" default="#variables.params.controller#" />
-		<cfargument name="action" type="string" default="#variables.params.action#" />
+		<cfargument name="controller" required="false" type="string" default="#variables.params.controller#" />
+		<cfargument name="action" required="false" type="string" default="#variables.params.action#" />
 		<cfscript>
 			var loc = {};
 			
@@ -78,7 +77,7 @@
 		</cfscript>
 	</cffunction>
 	
-	<cffunction name="$requestContentType" returntype="string">
+	<cffunction name="$requestContentType" access="public" output="false" returntype="string">
 		<cfargument name="params" type="struct" default="#variables.params#" />
 		<cfscript>
 			var loc = {};
@@ -109,7 +108,7 @@
 				loc.iEnd = ListLen(cgi.http_accept);
 				for (loc.i = 1; loc.i lte loc.iEnd; loc.i++) {
 				
-					if (ListFindNoCase("text/html,application/xhtml+xml", ListGetAt(cgi.http_accept, loc.i))) {
+					if (ListFindNoCase("text/html,application/xhtml+xml,*/*", Trim(ListGetAt(cgi.http_accept, loc.i)))) {
 						loc.returnFormat = "html";
 						break;
 					}
@@ -120,7 +119,7 @@
 		</cfscript>
 	</cffunction>
 	
-	<cffunction name="$toXml">
+	<cffunction name="$toXml" access="public" output="false" returntype="string">
 		<cfargument name="data" required="true" type="any" />
 		<cfscript>
 			var loc = {};
@@ -178,12 +177,13 @@
 		</cfscript>
 	</cffunction>
 	
-	<cffunction name="$notAcceptable">
-		<cfheader statuscode="406" />
-		<cfabort />
+	<cffunction name="$notAcceptable" access="public" output="false" returntype="void">
+		<cfscript>
+			$throw(type="Wheels.notAcceptable", message="The request type is not valid for this page.");
+		</cfscript>
 	</cffunction>
 	
-	<cffunction name="$setFormat" returntype="void">
+	<cffunction name="$setFormat" access="public" output="false" returntype="void">
 		<cfargument name="formats" required="true" type="string" />
 		<cfargument name="append" required="false" type="boolean" default="true" />
 		<cfargument name="toAction" required="false" type="boolean" default="false" />
@@ -205,7 +205,7 @@
 		</cflock>
 	</cffunction>
 	
-	<cffunction name="$checkSetApplicationScope">
+	<cffunction name="$checkSetApplicationScope" access="public" output="false" returntype="void">
 		<cfargument name="controller" required="false" type="string" default="#variables.wheels.name#" />
 		<cfargument name="action" required="false" type="string" default="" />
 		<cfscript>
