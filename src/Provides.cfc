@@ -31,7 +31,7 @@
 		</cfscript>
 	</cffunction>
 	
-	<cffunction name="display" access="public" output="false">
+	<cffunction name="renderWith" access="public" output="false">
 		<cfargument name="object" required="true" type="any" />
 		<cfargument name="controller" required="false" type="string" default="#variables.params.controller#" />
 		<cfargument name="action" required="false" type="string" default="#variables.params.action#" />
@@ -143,7 +143,24 @@
 				}
 			
 				return loc.toXml.queryToXML(argumentCollection=arguments);
+				
+			} else if (IsObject(arguments.data)) {
+			
+				loc.model = Duplicate(arguments.data);
+				arguments.data = arguments.data.properties();
+			
+				if (not StructKeyExists(arguments, "rootelement")) {
+					arguments.rootelement = loc.model.$classData().name;
+				}
+			
+				if (not StructKeyExists(arguments, "itemelement")) {
+					arguments.itemelement = "row";
+				}
+			
+				return loc.toXml.structToXML(argumentCollection=arguments);
+			
 			} else if (IsStruct(arguments.data)) {
+			
 				if (not StructKeyExists(arguments, "rootelement")) {
 					arguments.rootelement = "struct";
 				}
@@ -153,7 +170,9 @@
 				}
 			
 				return loc.toXml.structToXML(argumentCollection=arguments);
+				
 			} else if (IsArray(arguments.data)) {
+			
 				if (not StructKeyExists(arguments, "rootelement")) {
 					arguments.rootelement = "array";
 				}
