@@ -154,7 +154,7 @@
 				}
 			
 				if (not StructKeyExists(arguments, "itemelement")) {
-					arguments.itemelement = "row";
+					arguments.itemelement = "properties";
 				}
 			
 				return loc.toXml.structToXML(argumentCollection=arguments);
